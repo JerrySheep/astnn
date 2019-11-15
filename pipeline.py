@@ -1,7 +1,6 @@
 import pandas as pd
 import os
 
-
 class Pipeline:
     def __init__(self,  ratio, root):
         self.ratio = ratio
@@ -21,8 +20,10 @@ class Pipeline:
             from pycparser import c_parser
             parser = c_parser.CParser()
             source = pd.read_pickle(self.root+'programs.pkl')
+
             source.columns = ['id', 'code', 'label']
             source['code'] = source['code'].apply(parser.parse)
+
             source.to_pickle(path)
         self.sources = source
         return source
@@ -34,11 +35,10 @@ class Pipeline:
         ratios = [int(r) for r in self.ratio.split(':')]
         train_split = int(ratios[0]/sum(ratios)*data_num)
         val_split = train_split + int(ratios[1]/sum(ratios)*data_num)
-
         data = data.sample(frac=1, random_state=666)
-        train = data.iloc[:train_split]
-        dev = data.iloc[train_split:val_split]
-        test = data.iloc[val_split:]
+        train = data.iloc[:train_split] 
+        dev = data.iloc[train_split:val_split] 
+        test = data.iloc[val_split:] 
 
         def check_or_create(path):
             if not os.path.exists(path):
